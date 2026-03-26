@@ -115,77 +115,77 @@
 flowchart LR
 
 %% ================= CLIENT =================
-subgraph 클라이언트
+subgraph "클라이언트"
     A1[사용자]
     
-    A2["React Native App
-    - 단어 선택 및 문장 생성 UI
-    - 사용자 입력 → 서버 전송
-    - 이미지/음성 결과 출력
+    A2["React Native App<br>
+    - 단어 선택 및 문장 생성 UI<br>
+    - 사용자 입력 → 서버 전송<br>
+    - 이미지/음성 결과 출력<br>
     - 아이 / 부모 모드 분리"]
     
     A1 --> A2
 end
 
 %% ================= SERVER =================
-subgraph 서버 (EC2)
+subgraph "서버 (EC2)"
     
     %% Web Server
-    subgraph Web Server
-        B1["Nginx
-        - Reverse Proxy
+    subgraph "Web Server"
+        B1["Nginx<br>
+        - Reverse Proxy<br>
         - 요청 라우팅"]
         
-        B2["Gunicorn
-        - WSGI 서버
+        B2["Gunicorn<br>
+        - WSGI 서버<br>
         - API 실행"]
     end
     
     %% Backend
-    subgraph Backend (FastAPI / Spring)
+    subgraph "Backend"
         
-        C1["User Service
-        - 사용자 정보 생성/조회/수정
+        C1["User Service<br>
+        - 사용자 정보 관리<br>
         - 로그인 및 상태 관리"]
         
-        C2["Sentence Service
-        - 단어 조합 → 문장 생성
-        - AI 모델 호출"]
+        C2["Sentence Service<br>
+        - 문장 생성<br>
+        - AI 호출"]
         
-        C3["Recommend Service
-        - 개인화 단어 추천
-        - 사용 이력 기반 추천"]
+        C3["Recommend Service<br>
+        - 개인화 추천<br>
+        - 사용 이력 기반"]
         
-        C4["Report Service
-        - 사용 데이터 분석
-        - 발달 리포트 생성"]
+        C4["Report Service<br>
+        - 데이터 분석<br>
+        - 리포트 생성"]
         
     end
     
     %% Database
-    subgraph Database
-        D1["MySQL
-        - 사용자 정보
-        - 단어 및 문장 로그
-        - 추천 및 분석 데이터"]
+    subgraph "Database"
+        D1["MySQL<br>
+        - 사용자 정보<br>
+        - 로그 데이터<br>
+        - 분석 데이터"]
     end
     
     %% AI Layer
-    subgraph AI Layer
-        E1["GPT / Gemini
-        - 문장 생성 및 보정"]
+    subgraph "AI Layer"
+        E1["GPT / Gemini<br>
+        - 문장 생성"]
         
-        E2["Stable Diffusion
-        - 문장 기반 이미지 생성"]
+        E2["Stable Diffusion<br>
+        - 이미지 생성"]
         
-        E3["TTS (Clova / Google)
-        - 문장 → 음성 출력"]
+        E3["TTS<br>
+        - 음성 출력"]
     end
     
 end
 
 %% ================= FLOW =================
-A2 -->|API 요청| B1
+A2 --> B1
 B1 --> B2
 
 B2 --> C1
