@@ -114,78 +114,75 @@
 ```mermaid
 flowchart LR
 
-%% ================= CLIENT =================
-subgraph "클라이언트"
+subgraph Client
     A1[사용자]
-    
     A2["React Native App<br>
-    - 단어 선택 및 문장 생성 UI<br>
-    - 사용자 입력 → 서버 전송<br>
+    - 단어 카드 선택 및 문장 구성<br>
+    - 사용자 입력(API 요청) 생성<br>
     - 이미지/음성 결과 출력<br>
-    - 아이 / 부모 모드 분리"]
-    
+    - 아이 / 부모 모드 분리 UI"]
     A1 --> A2
 end
 
-%% ================= SERVER =================
-subgraph "서버 (EC2)"
-    
-    %% Web Server
-    subgraph "Web Server"
+subgraph Server
+
+    subgraph Web
         B1["Nginx<br>
-        - Reverse Proxy<br>
-        - 요청 라우팅"]
+        - 요청 라우팅<br>
+        - Reverse Proxy"]
         
         B2["Gunicorn<br>
-        - WSGI 서버<br>
-        - API 실행"]
+        - API 서버 실행<br>
+        - 요청 처리"]
     end
-    
-    %% Backend
-    subgraph "Backend"
+
+    subgraph Backend
         
         C1["User Service<br>
-        - 사용자 정보 관리<br>
-        - 로그인 및 상태 관리"]
+        - 사용자/아동 정보 관리<br>
+        - 온보딩 데이터 저장<br>
+        - 인증 및 상태 관리"]
         
         C2["Sentence Service<br>
-        - 문장 생성<br>
-        - AI 호출"]
+        - 선택 단어 조합<br>
+        - 문장 생성 요청 처리<br>
+        - AI 모델(GPT) 호출<br>
+        - 최종 문장 생성"]
         
         C3["Recommend Service<br>
-        - 개인화 추천<br>
-        - 사용 이력 기반"]
+        - 단어 후보 생성 (DB 기반)<br>
+        - 사용 이력 기반 우선순위 계산<br>
+        - 개인화 추천 단어 반환"]
         
         C4["Report Service<br>
-        - 데이터 분석<br>
-        - 리포트 생성"]
+        - 사용자 로그 수집<br>
+        - 단어 사용 패턴 분석<br>
+        - 발달 리포트 생성"]
         
     end
-    
-    %% Database
-    subgraph "Database"
+
+    subgraph DB
         D1["MySQL<br>
-        - 사용자 정보<br>
-        - 로그 데이터<br>
-        - 분석 데이터"]
+        - 사용자/아동 정보<br>
+        - 단어 선택 로그<br>
+        - 문장 생성 기록<br>
+        - 추천 및 분석 데이터"]
     end
-    
-    %% AI Layer
-    subgraph "AI Layer"
+
+    subgraph AI
         E1["GPT / Gemini<br>
-        - 문장 생성"]
+        - 문장 생성 및 문법 보정"]
         
         E2["Stable Diffusion<br>
-        - 이미지 생성"]
+        - 문장 기반 이미지 생성"]
         
-        E3["TTS<br>
-        - 음성 출력"]
+        E3["TTS (Clova / Google)<br>
+        - 문장 → 음성 변환"]
     end
-    
+
 end
 
-%% ================= FLOW =================
-A2 --> B1
+A2 -->|API 요청| B1
 B1 --> B2
 
 B2 --> C1
@@ -198,6 +195,8 @@ C2 --> D1
 C3 --> D1
 C4 --> D1
 
+C3 --> C2  %% 추천 → 문장 생성 연결
+
 C2 --> E1
 C2 --> E2
 C2 --> E3
@@ -207,7 +206,6 @@ E2 --> C2
 E3 --> C2
 
 C2 --> A2
-'''
 ### 2.3.1 전체 구조 개요
 
 본 시스템은 3계층 구조로 설계된다:
